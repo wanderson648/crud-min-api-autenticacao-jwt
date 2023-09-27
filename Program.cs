@@ -33,6 +33,23 @@ app.MapGet("/categorias/{id:int}", async (int id, AppDbContext db) =>
      is Categoria categoria ? Results.Ok(categoria) : Results.NotFound();
 });
 
+app.MapPut("/categorias/{id:int}", async (int id, Categoria categoria, AppDbContext db) =>
+{
+    if(categoria.CategoriaId != id)
+    {
+        return Results.BadRequest();
+    }
+
+    var categoriaDb = await db.Categorias.FindAsync(id);
+    if(categoriaDb == null) return Results.NotFound();
+
+    categoriaDb.Nome = categoria.Nome;
+    categoriaDb.Descricao = categoria.Descricao;
+    
+    await db.SaveChangesAsync();
+    return Results.Ok(categoriaDb);
+});
+
 
 
 if (app.Environment.IsDevelopment())
