@@ -23,10 +23,15 @@ app.MapPost("/categorias", async (Categoria categoria, AppDbContext db) =>
     await db.SaveChangesAsync();
     return Results.Created($"/categorias/{categoria.CategoriaId}", categoria);
 
-}).Produces<Categoria>(StatusCodes.Status201Created);
+});
 
+app.MapGet("/categorias", async (AppDbContext db) => await db.Categorias.ToListAsync());
 
-
+app.MapGet("/categorias/{id:int}", async (int id, AppDbContext db) =>
+{
+    return await db.Categorias.FindAsync(id)
+     is Categoria categoria ? Results.Ok(categoria) : Results.NotFound();
+});
 
 
 
